@@ -14,14 +14,28 @@ h2 {
     /* Navigation */
     nav {
         padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .nav-links {
         display: none;
     }
 
-    .logo {
+    
+
+    .name {
         font-size: 1.5rem;
+        text-decoration: none;
+        color: var(--green);
+        font-weight: 700;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     /* Hero Section */
@@ -401,12 +415,12 @@ header .logo:hover {
 
     /* Images */
     .profile-img {
-        max-width: 100%;
+        max-width: 20%;
         height: auto;
         border-radius: 50%;
         object-fit: cover;
-        width: 200px;
-        height: 200px;
+        width: 20px;
+        height: 20px;
         margin: 0 auto;
     }
 
