@@ -1,4 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu toggle
+    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileNavToggle && navLinks) {
+        mobileNavToggle.addEventListener('click', () => {
+            mobileNavToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            
+            // Toggle aria-expanded attribute
+            mobileNavToggle.setAttribute('aria-expanded', 
+                mobileNavToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+            );
+        });
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!mobileNavToggle.contains(e.target) && !navLinks.contains(e.target)) {
+            mobileNavToggle.classList.remove('active');
+            navLinks.classList.remove('active');
+            mobileNavToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -8,6 +33,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 target.scrollIntoView({
                     behavior: 'smooth'
                 });
+                
+                // Close mobile menu after clicking a link
+                if (mobileNavToggle) {
+                    mobileNavToggle.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    mobileNavToggle.setAttribute('aria-expanded', 'false');
+                }
             }
         });
     });
@@ -87,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get form data
             const formData = new FormData(contactForm);
             
-            // Send data to server
             fetch('submit_contact.php', {
                 method: 'POST',
                 body: formData
