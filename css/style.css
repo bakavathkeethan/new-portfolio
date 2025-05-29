@@ -8,6 +8,132 @@ h2 {
     text-align: center;
     letter-spacing: 1px;
 }
+
+/* Responsive Design - Mobile First */
+@media screen and (max-width: 768px) {
+    /* Navigation */
+    nav {
+        padding: 0 20px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 0 20px;
+    }
+
+    .hero-content {
+        text-align: center;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+        max-width: 100%;
+    }
+
+    /* Container */
+    .container {
+        padding: 0 15px;
+    }
+
+    /* Skills */
+    .skills-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    /* Contact Form */
+    .contact-form {
+        width: 100%;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+/* Tablet Devices */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    /* Navigation */
+    nav {
+        padding: 0 30px;
+    }
+
+    .nav-links {
+        gap: 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero-wrapper {
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+
+    .hero-content h2 {
+        font-size: 1.8rem;
+    }
+
+    /* Skills */
+    .skills-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+}
+
+/* Desktop Devices */
+@media screen and (min-width: 1025px) {
+    /* Navigation */
+    nav {
+        padding: 0 50px;
+    }
+
+    .nav-links {
+        gap: 2rem;
+    }
+
+    /* Hero Section */
+    .hero-wrapper {
+        grid-template-columns: 3fr 2fr;
+        gap: 50px;
+    }
+
+    .hero-content h1 {
+        font-size: 4rem;
+    }
+
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    /* Skills */
+    .skills-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+    }
+}
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
 
 :root {
