@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/B&K CodeHub Balanced Gray Lettermark Logo.png">
+    <link rel="stylesheet" href="db.php">
+    <link rel="stylesheet" href="submit_contact.php">
+    
 </head>
 
 <body>
@@ -23,7 +26,7 @@
                         <li><a href="#projects">Projects</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
-                     <!-- <div class="name-container">
+                    <!-- <div class="name-container">
                         <a href="#" class="name">Bakavathkeethan</a>
                     </div> -->
                 </div>
@@ -181,7 +184,8 @@
             <div class="projects-list">
                 <div class="project-card">
                     <div class="project-image">
-                        <img src="img/atm.jpg" alt="ATM Weapon and Helmet Detector" class="project-img" onerror="this.onerror=null;this.src='img/placeholder.jpg';">
+                        <img src="img/atm.jpg" alt="ATM Weapon and Helmet Detector" class="project-img"
+                            onerror="this.onerror=null;this.src='img/placeholder.jpg';">
                     </div>
                     <div class="project-content">
                         <h3>ATM Weapon and Helmet Detector</h3>
@@ -202,7 +206,8 @@
                 </div>
                 <div class="project-card">
                     <div class="project-image">
-                        <img src="img/car.jpg" alt="Drivers Sleep Alert System" class="project-img" onerror="this.onerror=null;this.src='img/placeholder.jpg';">
+                        <img src="img/car.jpg" alt="Drivers Sleep Alert System" class="project-img"
+                            onerror="this.onerror=null;this.src='img/placeholder.jpg';">
                     </div>
                     <div class="project-content">
                         <h3>Drivers Sleep Alert System</h3>
@@ -221,7 +226,8 @@
                 </div>
                 <div class="project-card">
                     <div class="project-image">
-                        <img src="img/cling.png" alt="Clinic Management System" class="project-img" onerror="this.onerror=null;this.src='img/placeholder.jpg';">
+                        <img src="img/cling.png" alt="Clinic Management System" class="project-img"
+                            onerror="this.onerror=null;this.src='img/placeholder.jpg';">
                     </div>
                     <div class="project-content">
                         <h3>Clinic Management System</h3>
@@ -240,7 +246,8 @@
                 </div>
                 <div class="project-card">
                     <div class="project-image">
-                        <img src="img/travel.jpg" alt="Travel Destination Booking System" class="project-img" onerror="this.onerror=null;this.src='img/placeholder.jpg';">
+                        <img src="img/travel.jpg" alt="Travel Destination Booking System" class="project-img"
+                            onerror="this.onerror=null;this.src='img/placeholder.jpg';">
                     </div>
                     <div class="project-content">
                         <h3>Travel Destination Booking System</h3>
@@ -248,10 +255,12 @@
                             <li>PHP, MySQL</li>
                         </ul>
                         <div class="project-links">
-                            <a href="https://github.com/bakavathkeethan/Life-Travel-Destination-Booking-System" class="project-link" target="_blank">
+                            <a href="https://github.com/bakavathkeethan/Life-Travel-Destination-Booking-System"
+                                class="project-link" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
-                            <a href="https://github.com/bakavathkeethan/Life-Travel-Booking-System" class="project-link" target="_blank">
+                            <a href="https://github.com/bakavathkeethan/Life-Travel-Booking-System" class="project-link"
+                                target="_blank">
                                 <i class="fab fa-github"></i>
                             </a>
                         </div>
@@ -262,24 +271,38 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <section id="contact" class="contact" aria-labelledby="contact-heading">
         <div class="container">
-            <h2>Get In Touch</h2>
+            <h2 id="contact-heading">Get In Touch</h2>
             <div class="contact-container">
-                <form id="contact-form" class="contact-form" action="submit_contact.php" method="POST">
+                <form id="contact-form" class="contact-form" action="submit_contact.php" method="POST" novalidate>
                     <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        <label for="name" class="sr-only">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" required minlength="2"
+                            maxlength="100" pattern="[A-Za-z ]+" title="Please enter only letters and spaces">
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        <label for="email" class="sr-only">Your Email</label>
+                        <input type="email" id="email" name="email" placeholder="Your Email" required
+                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
                     </div>
                     <div class="form-group">
-                        <input type="text" id="subject" name="subject" placeholder="Subject" required>
+                        <label for="subject" class="sr-only">Subject</label>
+                        <input type="text" id="subject" name="subject" placeholder="Subject" required minlength="5"
+                            maxlength="100">
                     </div>
                     <div class="form-group">
-                        <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+                        <label for="message" class="sr-only">Your Message</label>
+                        <textarea id="message" name="message" placeholder="Your Message" required minlength="10"
+                            maxlength="1000"></textarea>
                     </div>
-                    <button type="submit" class="submit-btn">Send Message</button>
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn" aria-label="Send message">
+                            <span class="btn-text">Send Message</span>
+                            <span class="loading-spinner" aria-hidden="true" hidden></span>
+                        </button>
+                    </div>
+                    <div id="form-status" class="form-status" aria-live="polite"></div>
                 </form>
             </div>
         </div>
