@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 /**
  * Function to handle contact form submissions
  * @param array $formData Array containing form data
@@ -105,4 +105,4 @@ $response = handleContactForm($formData);
 // Return JSON response
 http_response_code($response['success'] ? 200 : 500);
 echo json_encode($response);
-?>
+?> -->

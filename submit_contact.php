@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 // Database configuration
 $db_host = 'localhost';
 $db_name = 'portfolio_db';
@@ -81,4 +81,4 @@ try {
         'message' => 'Failed to save your message. Please try again later.'
     ]);
 }
-?>
+?> -->
