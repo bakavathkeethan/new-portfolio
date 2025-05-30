@@ -4,25 +4,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelector('.nav-links');
 
     if (mobileNavToggle && navLinks) {
-        mobileNavToggle.addEventListener('click', () => {
+        // Initialize aria-expanded attribute
+        mobileNavToggle.setAttribute('aria-expanded', 'false');
+
+        mobileNavToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from bubbling up
             mobileNavToggle.classList.toggle('active');
             navLinks.classList.toggle('active');
             
             // Toggle aria-expanded attribute
-            mobileNavToggle.setAttribute('aria-expanded', 
-                mobileNavToggle.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
-            );
+            const expanded = mobileNavToggle.getAttribute('aria-expanded') === 'true';
+            mobileNavToggle.setAttribute('aria-expanded', !expanded);
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (mobileNavToggle.classList.contains('active') && 
+                !mobileNavToggle.contains(e.target) && 
+                !navLinks.contains(e.target)) {
+                mobileNavToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+                mobileNavToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Close mobile menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mobileNavToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+                mobileNavToggle.setAttribute('aria-expanded', 'false');
+            });
         });
     }
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!mobileNavToggle.contains(e.target) && !navLinks.contains(e.target)) {
-            mobileNavToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-            mobileNavToggle.setAttribute('aria-expanded', 'false');
-        }
-    });
 
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
