@@ -1,42 +1,47 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
-    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
     const body = document.body;
+    const html = document.documentElement;
 
-    if (mobileNavToggle && navLinks) {
+    if (mobileMenuToggle && navLinks) {
         // Initialize aria-expanded attribute
-        mobileNavToggle.setAttribute('aria-expanded', 'false');
-        mobileNavToggle.setAttribute('aria-label', 'Toggle navigation menu');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.setAttribute('aria-label', 'Toggle navigation menu');
 
         const toggleMenu = (show = null) => {
-            const shouldShow = show !== null ? show : !mobileNavToggle.classList.contains('active');
+            const shouldShow = show !== null ? show : !mobileMenuToggle.classList.contains('active');
             
-            mobileNavToggle.classList.toggle('active', shouldShow);
+            mobileMenuToggle.classList.toggle('active', shouldShow);
             navLinks.classList.toggle('active', shouldShow);
-            body.style.overflow = shouldShow ? 'hidden' : '';
             
-            // Toggle aria-expanded attribute
-            mobileNavToggle.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
-            
-            // Add/remove no-scroll class to body
+            // Toggle body scroll
             if (shouldShow) {
+                body.style.overflow = 'hidden';
+                html.style.overflow = 'hidden';
                 body.classList.add('menu-open');
             } else {
+                body.style.overflow = '';
+                html.style.overflow = '';
                 body.classList.remove('menu-open');
             }
+            
+            // Toggle aria-expanded attribute
+            mobileMenuToggle.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
         };
 
         // Toggle menu on button click
-        mobileNavToggle.addEventListener('click', (e) => {
+        mobileMenuToggle.addEventListener('click', (e) => {
             e.stopPropagation();
+            e.preventDefault();
             toggleMenu();
         });
 
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {
-            if (mobileNavToggle.classList.contains('active') && 
-                !mobileNavToggle.contains(e.target) && 
+            if (mobileMenuToggle.classList.contains('active') && 
+                !mobileMenuToggle.contains(e.target) && 
                 !navLinks.contains(e.target)) {
                 toggleMenu(false);
             }
@@ -47,6 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('click', () => {
                 toggleMenu(false);
             });
+        });
+
+        // Close menu on window resize if it becomes desktop view
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 768) {
+                    toggleMenu(false);
+                }
+            }, 250);
         });
 
         // Handle keyboard navigation
