@@ -235,6 +235,15 @@ h2::after {
 
 /* Mobile Navigation */
 @media screen and (max-width: 768px) {
+    /* Hide desktop navigation in mobile view */
+    .nav-links {
+        display: none;
+    }
+    
+    /* Show mobile menu when active */
+    .nav-links.active {
+        display: flex;
+    }
     .mobile-menu-toggle {
         display: flex;
         flex-direction: column;
@@ -287,36 +296,48 @@ h2::after {
         transform: translateY(8px);
     }
 
+    /* Hide navigation by default in mobile view */
     .nav-links {
+        display: none;
+    }
+    
+    /* Show mobile menu when active */
+    .nav-links.active {
         position: fixed;
         top: 0;
-        right: -100%;
-        width: 85%;
+        right: 0;
+        width: 100%;
         max-width: 320px;
         height: 100vh;
         background: rgba(10, 25, 47, 0.98);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
+        display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        padding: 100px 2rem 2rem;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 0;
+        margin: 0;
         transition: all 0.6s cubic-bezier(0.77, 0, 0.175, 1);
         z-index: 1000;
         box-shadow: -10px 0 50px -15px rgba(2, 12, 27, 0.7);
         overflow-y: auto;
     }
 
-    .nav-links.active {
-        right: 0;
-    }
 
     .nav-links li {
         width: 100%;
         margin: 0.5rem 0;
+        padding: 0 2rem;
         opacity: 0;
         transform: translateX(20px);
         transition: all 0.4s ease;
+        text-align: center;
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 50px;
     }
 
     .nav-links.active li {
@@ -334,14 +355,18 @@ h2::after {
 
     .nav-links a {
         display: block;
-        padding: 1rem 1.5rem;
-        font-size: 1.2rem;
-        width: 100%;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
         color: var(--lightest-slate);
         border-radius: 4px;
         transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
         position: relative;
-        overflow: hidden;
+        line-height: 1.5;
     }
 
     .nav-links a::before {
