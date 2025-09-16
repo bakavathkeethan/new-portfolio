@@ -1,34 +1,58 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle
+    // Mobile menu elements
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
+    const navOverlay = document.querySelector('.nav-overlay');
     const body = document.body;
     const html = document.documentElement;
+    const menuItems = document.querySelectorAll('.nav-links a');
+    const firstMenuItem = menuItems[0];
+    const lastMenuItem = menuItems[menuItems.length - 1];
 
     if (mobileMenuToggle && navLinks) {
-        // Initialize aria-expanded attribute
+        // Initialize ARIA attributes
         mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileMenuToggle.setAttribute('aria-label', 'Toggle navigation menu');
+        mobileMenuToggle.setAttribute('aria-controls', 'mobile-menu');
+        navLinks.setAttribute('aria-hidden', 'true');
 
+        // Toggle menu function
         const toggleMenu = (show = null) => {
-            const shouldShow = show !== null ? show : !mobileMenuToggle.classList.contains('active');
+            const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
+            const shouldShow = show !== null ? show : !isExpanded;
             
+            // Toggle classes
             mobileMenuToggle.classList.toggle('active', shouldShow);
             navLinks.classList.toggle('active', shouldShow);
+            navOverlay.classList.toggle('active', shouldShow);
             
-            // Toggle body scroll
+            // Toggle body scroll and ARIA attributes
             if (shouldShow) {
                 body.style.overflow = 'hidden';
                 html.style.overflow = 'hidden';
+                mobileMenuToggle.setAttribute('aria-expanded', 'true');
+                navLinks.setAttribute('aria-hidden', 'false');
                 body.classList.add('menu-open');
+                
+                // Set focus to first menu item when opening
+                setTimeout(() => {
+                    firstMenuItem.focus();
+                }, 100);
             } else {
                 body.style.overflow = '';
                 html.style.overflow = '';
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                navLinks.setAttribute('aria-hidden', 'true');
                 body.classList.remove('menu-open');
+                
+                // Return focus to menu button when closing
+                mobileMenuToggle.focus();
             }
             
-            // Toggle aria-expanded attribute
-            mobileMenuToggle.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
+            // Toggle menu button text
+            const menuText = mobileMenuToggle.querySelector('.menu-text');
+            if (menuText) {
+                menuText.textContent = shouldShow ? 'Close' : 'Menu';
+            }
         };
 
         // Toggle menu on button click
@@ -36,6 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
             e.preventDefault();
             toggleMenu();
+        });
+
+        // Close menu when clicking overlay
+        navOverlay.addEventListener('click', () => {
+            toggleMenu(false);
         });
 
         // Close menu when clicking outside
@@ -48,10 +77,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Close menu when clicking a link
-        navLinks.querySelectorAll('a').forEach(link => {
+        menuItems.forEach(link => {
             link.addEventListener('click', () => {
                 toggleMenu(false);
             });
+        });
+
+        // Handle keyboard navigation
+        mobileMenuToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMenu();
+            } else if (e.key === 'Escape' && mobileMenuToggle.classList.contains('active')) {
+                toggleMenu(false);
+            }
+        });
+
+        // Trap focus inside the menu when open
+        navLinks.addEventListener('keydown', (e) => {
+            if (!mobileMenuToggle.classList.contains('active')) return;
+
+            const isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+
+            if (!isTabPressed) return;
+
+            if (e.shiftKey) {
+                if (document.activeElement === firstMenuItem) {
+                    e.preventDefault();
+                    lastMenuItem.focus();
+                }
+            } else {
+                if (document.activeElement === lastMenuItem) {
+                    e.preventDefault();
+                    firstMenuItem.focus();
+                }
+            }
         });
 
         // Close menu on window resize if it becomes desktop view
@@ -62,18 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (window.innerWidth > 768) {
                     toggleMenu(false);
                 }
-            }, 250);
-        });
-
-        // Handle keyboard navigation
-        mobileNavToggle.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleMenu();
-            } else if (e.key === 'Escape' && mobileNavToggle.classList.contains('active')) {
-                toggleMenu(false);
-                mobileNavToggle.focus();
-            }
+            }, 100);
         });
     }
 
