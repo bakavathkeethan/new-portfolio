@@ -2,40 +2,62 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
     const navLinks = document.querySelector('.nav-links');
+    const body = document.body;
 
     if (mobileNavToggle && navLinks) {
         // Initialize aria-expanded attribute
         mobileNavToggle.setAttribute('aria-expanded', 'false');
+        mobileNavToggle.setAttribute('aria-label', 'Toggle navigation menu');
 
-        mobileNavToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent click from bubbling up
-            mobileNavToggle.classList.toggle('active');
-            navLinks.classList.toggle('active');
+        const toggleMenu = (show = null) => {
+            const shouldShow = show !== null ? show : !mobileNavToggle.classList.contains('active');
+            
+            mobileNavToggle.classList.toggle('active', shouldShow);
+            navLinks.classList.toggle('active', shouldShow);
+            body.style.overflow = shouldShow ? 'hidden' : '';
             
             // Toggle aria-expanded attribute
-            const expanded = mobileNavToggle.getAttribute('aria-expanded') === 'true';
-            mobileNavToggle.setAttribute('aria-expanded', !expanded);
+            mobileNavToggle.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
+            
+            // Add/remove no-scroll class to body
+            if (shouldShow) {
+                body.classList.add('menu-open');
+            } else {
+                body.classList.remove('menu-open');
+            }
+        };
+
+        // Toggle menu on button click
+        mobileNavToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
         });
 
-        // Close mobile menu when clicking outside
+        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (mobileNavToggle.classList.contains('active') && 
                 !mobileNavToggle.contains(e.target) && 
                 !navLinks.contains(e.target)) {
-                mobileNavToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-                mobileNavToggle.setAttribute('aria-expanded', 'false');
+                toggleMenu(false);
             }
         });
 
-        // Close mobile menu when clicking a link
+        // Close menu when clicking a link
         navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.stopPropagation();
-                mobileNavToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-                mobileNavToggle.setAttribute('aria-expanded', 'false');
+            link.addEventListener('click', () => {
+                toggleMenu(false);
             });
+        });
+
+        // Handle keyboard navigation
+        mobileNavToggle.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMenu();
+            } else if (e.key === 'Escape' && mobileNavToggle.classList.contains('active')) {
+                toggleMenu(false);
+                mobileNavToggle.focus();
+            }
         });
     }
 
@@ -61,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Active link highlighting
     const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-links a');
+    const navLinkItems = document.querySelectorAll('.nav-links a');
 
     window.addEventListener('scroll', () => {
         let current = '';
@@ -73,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        navLinks.forEach(link => {
+        navLinkItems.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === `#${current}`) {
                 link.classList.add('active');
