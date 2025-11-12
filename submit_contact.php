@@ -1,51 +1,53 @@
-<!-- <?php
-// Database configuration
-$db_host = 'localhost';
-$db_name = 'portfolio_db';
-$db_user = 'root';
-$db_pass = '';
+<?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Establish database connection
+header('Content-Type: application/json');
+
+// Log the POST data for debugging
+file_put_contents('debug.log', print_r($_POST, true), FILE_APPEND);
+
 try {
-    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => 'Database connection failed']);
-    exit;
-}
+    require_once 'config/database.php';
+    
+    // Check database connection
+    if ($conn->connect_error) {
+        throw new Exception("Database connection failed: " . $conn->connect_error);
+    }
 
-// Only process POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
-    exit;
-}
+    // Only process POST requests
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Invalid request method");
+    }
 
-// Get and sanitize form data
-$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-$subject = filter_input(INPUT_POST, 'subject', FILTER_SANITIZE_STRING);
-$message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
+    // Get and sanitize form data
+    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $subject = isset($_POST['subject']) ? trim($_POST['subject']) : '';
+    $message = isset($_POST['message']) ? trim($_POST['message']) : '';
 
-// Validate inputs
-$errors = [];
+    // Log received data
+    file_put_contents('debug.log', "Name: $name, Email: $email, Subject: $subject\n", FILE_APPEND);
 
-if (empty($name) || !preg_match('/^[A-Za-z ]+$/', $name)) {
-    $errors['name'] = 'Please enter a valid name (letters and spaces only)';
-}
+    // Validate inputs
+    $errors = [];
 
-if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors['email'] = 'Please enter a valid email address';
-}
+    if (empty($name) || !preg_match('/^[A-Za-z\s]+$/', $name)) {
+        $errors['name'] = 'Please enter a valid name (letters and spaces only)';
+    }
 
-if (empty($subject) || strlen($subject) < 5 || strlen($subject) > 100) {
-    $errors['subject'] = 'Subject must be between 5 and 100 characters';
-}
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Please enter a valid email address';
+    }
 
-if (empty($message) || strlen($message) < 10 || strlen($message) > 1000) {
-    $errors['message'] = 'Message must be between 10 and 1000 characters';
-}
+    if (empty($subject) || strlen($subject) < 5 || strlen($subject) > 100) {
+        $errors['subject'] = 'Subject must be between 5 and 100 characters';
+    }
+
+    if (empty($message) || strlen($message) < 10 || strlen($message) > 1000) {
+        $errors['message'] = 'Message must be between 10 and 1000 characters';
+    }
 
 // If there are errors, return them
 if (!empty($errors)) {
@@ -55,30 +57,42 @@ if (!empty($errors)) {
 }
 
 try {
-    // Prepare SQL statement
-    $stmt = $pdo->prepare("INSERT INTO contacts (name, email, subject, message, created_at) 
-                          VALUES (:name, :email, :subject, :message, NOW())");
-    
-    // Bind parameters
-    $stmt->bindParam(':name', $name);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':subject', $subject);
-    $stmt->bindParam(':message', $message);
+    // Prepare and bind
+    $stmt = $conn->prepare("INSERT INTO contacts (name, email, subject, message) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $name, $email, $subject, $message);
     
     // Execute the query
-    $stmt->execute();
+    if ($stmt->execute()) {
+        // Send email notification (optional)
+        $to = 'your-email@example.com';
+        $email_subject = "New Contact Form Submission: $subject";
+        $email_body = "You have received a new message from your website contact form.\n\n".
+                     "Name: $name\n".
+                     "Email: $email\n".
+                     "Subject: $subject\n".
+                     "Message:\n$message";
+        $headers = "From: $email\r\n".
+                  "Reply-To: $email\r\n".
+                  'X-Mailer: PHP/'.phpversion();
+        
+        // Uncomment to enable email sending
+        // mail($to, $email_subject, $email_body, $headers);
+        
+        // Return success response
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Thank you for your message! We will get back to you soon.'
+        ]);
+    } else {
+        throw new Exception('Failed to save contact');
+    }
     
-    // Return success response
-    echo json_encode([
-        'status' => 'success',
-        'message' => 'Thank you for your message! We will get back to you soon.'
-    ]);
-    
-} catch (PDOException $e) {
+} catch (Exception $e) {
+    error_log('Contact form error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'status' => 'error',
-        'message' => 'Failed to save your message. Please try again later.'
+        'message' => 'Failed to process your request. Please try again later.'
     ]);
 }
-?> -->
+?>
